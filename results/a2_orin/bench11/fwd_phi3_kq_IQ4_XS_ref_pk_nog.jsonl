@@ -1,0 +1,8 @@
+{"bundle": "rt/phi3_kq_IQ4_XS_ref_pk", "m": 1, "pos": 128, "forward_s": 0.03092, "per_token_s": 0.03092, "act8": 1}
+{"bundle": "rt/phi3_kq_IQ4_XS_ref_pk", "m": 2, "pos": 128, "forward_s": 0.03184, "per_token_s": 0.01592, "act8": 1}
+{"bundle": "rt/phi3_kq_IQ4_XS_ref_pk", "m": 3, "pos": 128, "forward_s": 0.03301, "per_token_s": 0.01100, "act8": 1}
+{"bundle": "rt/phi3_kq_IQ4_XS_ref_pk", "m": 4, "pos": 128, "forward_s": 0.03388, "per_token_s": 0.00847, "act8": 1}
+{"bundle": "rt/phi3_kq_IQ4_XS_ref_pk", "m": 5, "pos": 128, "forward_s": 0.04148, "per_token_s": 0.00830, "act8": 1}
+{"bundle": "rt/phi3_kq_IQ4_XS_ref_pk", "m": 6, "pos": 128, "forward_s": 0.04206, "per_token_s": 0.00701, "act8": 1}
+{"bundle": "rt/phi3_kq_IQ4_XS_ref_pk", "m": 7, "pos": 128, "forward_s": 0.04262, "per_token_s": 0.00609, "act8": 1}
+{"bundle": "rt/phi3_kq_IQ4_XS_ref_pk", "m": 8, "pos": 128, "forward_s": 0.04320, "per_token_s": 0.00540, "act8": 1}

@@ -1,0 +1,2 @@
+[phi3rt] rt/smollm_kq_IQ4_XS_g1_lam0: resident 908.6 MB, streamed 0.0 MB (0 tensors), embed host (mmap), scratch 16.8 MB, ctx 512, batch 128, load 2.0 s, MemAvailable 4655 -> 4292 MB
+[graphs] 8 captured, 56 launches

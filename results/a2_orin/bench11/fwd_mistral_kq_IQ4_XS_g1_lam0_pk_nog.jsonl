@@ -1,0 +1,8 @@
+{"bundle": "rt/mistral_kq_IQ4_XS_g1_lam0_pk", "m": 1, "pos": 128, "forward_s": 0.05269, "per_token_s": 0.05269, "act8": 1}
+{"bundle": "rt/mistral_kq_IQ4_XS_g1_lam0_pk", "m": 2, "pos": 128, "forward_s": 0.05529, "per_token_s": 0.02764, "act8": 1}
+{"bundle": "rt/mistral_kq_IQ4_XS_g1_lam0_pk", "m": 3, "pos": 128, "forward_s": 0.06461, "per_token_s": 0.02154, "act8": 1}
+{"bundle": "rt/mistral_kq_IQ4_XS_g1_lam0_pk", "m": 4, "pos": 128, "forward_s": 0.06665, "per_token_s": 0.01666, "act8": 1}
+{"bundle": "rt/mistral_kq_IQ4_XS_g1_lam0_pk", "m": 5, "pos": 128, "forward_s": 0.07417, "per_token_s": 0.01483, "act8": 1}
+{"bundle": "rt/mistral_kq_IQ4_XS_g1_lam0_pk", "m": 6, "pos": 128, "forward_s": 0.08012, "per_token_s": 0.01335, "act8": 1}
+{"bundle": "rt/mistral_kq_IQ4_XS_g1_lam0_pk", "m": 7, "pos": 128, "forward_s": 0.08033, "per_token_s": 0.01148, "act8": 1}
+{"bundle": "rt/mistral_kq_IQ4_XS_g1_lam0_pk", "m": 8, "pos": 128, "forward_s": 0.08030, "per_token_s": 0.01004, "act8": 1}

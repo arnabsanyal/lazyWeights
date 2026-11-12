@@ -1,0 +1,10 @@
+# A4 ASIC sizing: one Huffman lane (hw/huff/rtl/huff_lane.sv), LOOKUP=1, BUF 64, FIFO 4; ASAP7, 1 GHz target
+export PLATFORM          = asap7
+export DESIGN_NAME       = huff_lane
+export DESIGN_NICKNAME   = huff_lane_cmp
+export VERILOG_FILES     = $(HUFF_RTL)/huff_lane.sv
+export SDC_FILE          = $(HUFF_ORFS)/constraint.sdc
+export VERILOG_TOP_PARAMS = LOOKUP 1 BUF 64 FIFO 4
+export CORE_UTILIZATION  = 50
+export PLACE_DENSITY     = 0.60
+export SYNTH_HIERARCHICAL = 0

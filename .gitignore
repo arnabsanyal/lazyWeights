@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+build/
+models/
+third_party/
+results/logs/
+*.gguf
+figs/

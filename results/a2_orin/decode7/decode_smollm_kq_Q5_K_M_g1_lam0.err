@@ -1,0 +1,1 @@
+[phi3rt] rt/smollm_kq_Q5_K_M_g1_lam0: resident 1198.8 MB, streamed 0.0 MB (0 tensors), embed host (mmap), scratch 16.8 MB, ctx 512, batch 128, load 2.9 s, MemAvailable 5120 -> 4545 MB

@@ -1,0 +1,8 @@
+{"bundle": "~/ecw_data/rt/smollm_kq_Q6_K_g1_lam0_c1.5", "m": 1, "pos": 128, "forward_s": 0.47181, "per_token_s": 0.47181}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q6_K_g1_lam0_c1.5", "m": 2, "pos": 128, "forward_s": 0.56000, "per_token_s": 0.28000}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q6_K_g1_lam0_c1.5", "m": 3, "pos": 128, "forward_s": 0.59329, "per_token_s": 0.19776}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q6_K_g1_lam0_c1.5", "m": 4, "pos": 128, "forward_s": 0.59877, "per_token_s": 0.14969}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q6_K_g1_lam0_c1.5", "m": 5, "pos": 128, "forward_s": 0.96997, "per_token_s": 0.19399}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q6_K_g1_lam0_c1.5", "m": 6, "pos": 128, "forward_s": 0.97618, "per_token_s": 0.16270}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q6_K_g1_lam0_c1.5", "m": 7, "pos": 128, "forward_s": 0.98129, "per_token_s": 0.14018}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q6_K_g1_lam0_c1.5", "m": 8, "pos": 128, "forward_s": 0.99066, "per_token_s": 0.12383}

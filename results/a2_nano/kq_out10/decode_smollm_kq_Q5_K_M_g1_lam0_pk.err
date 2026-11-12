@@ -1,0 +1,1 @@
+[phi3rt] ~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0_pk: resident 1224.7 MB, streamed 0.0 MB (0 tensors), embed host (mmap), scratch 16.8 MB, ctx 512, batch 128, load 12.0 s, MemAvailable 3435 -> 2013 MB

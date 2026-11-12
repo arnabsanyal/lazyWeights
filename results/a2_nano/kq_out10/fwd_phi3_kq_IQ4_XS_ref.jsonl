@@ -1,0 +1,8 @@
+{"bundle": "~/ecw_data/rt/phi3_kq_IQ4_XS_ref", "m": 1, "pos": 128, "forward_s": 0.58284, "per_token_s": 0.58284, "act8": 0}
+{"bundle": "~/ecw_data/rt/phi3_kq_IQ4_XS_ref", "m": 2, "pos": 128, "forward_s": 0.64286, "per_token_s": 0.32143, "act8": 0}
+{"bundle": "~/ecw_data/rt/phi3_kq_IQ4_XS_ref", "m": 3, "pos": 128, "forward_s": 0.84135, "per_token_s": 0.28045, "act8": 0}
+{"bundle": "~/ecw_data/rt/phi3_kq_IQ4_XS_ref", "m": 4, "pos": 128, "forward_s": 0.85629, "per_token_s": 0.21407, "act8": 0}
+{"bundle": "~/ecw_data/rt/phi3_kq_IQ4_XS_ref", "m": 5, "pos": 128, "forward_s": 1.16864, "per_token_s": 0.23373, "act8": 0}
+{"bundle": "~/ecw_data/rt/phi3_kq_IQ4_XS_ref", "m": 6, "pos": 128, "forward_s": 1.17916, "per_token_s": 0.19653, "act8": 0}
+{"bundle": "~/ecw_data/rt/phi3_kq_IQ4_XS_ref", "m": 7, "pos": 128, "forward_s": 1.18386, "per_token_s": 0.16912, "act8": 0}
+{"bundle": "~/ecw_data/rt/phi3_kq_IQ4_XS_ref", "m": 8, "pos": 128, "forward_s": 1.19379, "per_token_s": 0.14922, "act8": 0}

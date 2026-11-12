@@ -1,0 +1,8 @@
+{"bundle": "~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0", "m": 1, "pos": 128, "forward_s": 0.47285, "per_token_s": 0.47285, "act8": 0}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0", "m": 2, "pos": 128, "forward_s": 0.48749, "per_token_s": 0.24375, "act8": 0}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0", "m": 3, "pos": 128, "forward_s": 0.61551, "per_token_s": 0.20517, "act8": 0}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0", "m": 4, "pos": 128, "forward_s": 0.62560, "per_token_s": 0.15640, "act8": 0}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0", "m": 5, "pos": 128, "forward_s": 0.81879, "per_token_s": 0.16376, "act8": 0}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0", "m": 6, "pos": 128, "forward_s": 0.81976, "per_token_s": 0.13663, "act8": 0}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0", "m": 7, "pos": 128, "forward_s": 0.82782, "per_token_s": 0.11826, "act8": 0}
+{"bundle": "~/ecw_data/rt/smollm_kq_Q5_K_M_g1_lam0", "m": 8, "pos": 128, "forward_s": 0.84187, "per_token_s": 0.10523, "act8": 0}

@@ -1,0 +1,13 @@
+# Python 3.12; the versions the paper's numbers were produced with
+torch==2.11.0
+transformers==5.5.4
+datasets==5.0.1
+lm_eval==0.4.13
+numpy==2.4.4
+safetensors==0.7.0
+onnx==1.21.0
+huggingface_hub==1.11.0
+accelerate==1.13.0
+sentencepiece
+matplotlib==3.11.2
+fonttools==4.66.1

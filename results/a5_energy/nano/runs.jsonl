@@ -1,0 +1,10 @@
+{"buffer_mib": 1024, "sleep_ns": 0, "t_start": 1793485533.417, "t_end": 1793485539.456, "bytes": 1.202591e+11, "gbps": 19.915, "err": "no error"}
+{"buffer_mib": 1024, "sleep_ns": 300, "t_start": 1793485543.778, "t_end": 1793485549.833, "bytes": 1.105954e+11, "gbps": 18.267, "err": "no error"}
+{"buffer_mib": 1024, "sleep_ns": 1000, "t_start": 1793485554.003, "t_end": 1793485560.040, "bytes": 7.086696e+10, "gbps": 11.738, "err": "no error"}
+{"buffer_mib": 1024, "sleep_ns": 3000, "t_start": 1793485564.215, "t_end": 1793485570.410, "bytes": 3.328600e+10, "gbps": 5.373, "err": "no error"}
+{"buffer_mib": 1024, "sleep_ns": 10000, "t_start": 1793485575.240, "t_end": 1793485581.716, "bytes": 1.181116e+10, "gbps": 1.824, "err": "no error"}
+{"buffer_mib": 0.125, "sleep_ns": 0, "t_start": 1793485584.953, "t_end": 1793485590.956, "bytes": 2.974265e+11, "gbps": 49.553, "err": "no error"}
+{"buffer_mib": 0.125, "sleep_ns": 300, "t_start": 1793485594.177, "t_end": 1793485600.215, "bytes": 1.267015e+11, "gbps": 20.984, "err": "no error"}
+{"buffer_mib": 0.125, "sleep_ns": 1000, "t_start": 1793485603.516, "t_end": 1793485609.597, "bytes": 6.871948e+10, "gbps": 11.300, "err": "no error"}
+{"buffer_mib": 0.125, "sleep_ns": 3000, "t_start": 1793485612.892, "t_end": 1793485619.088, "bytes": 3.113851e+10, "gbps": 5.026, "err": "no error"}
+{"buffer_mib": 0.125, "sleep_ns": 10000, "t_start": 1793485622.559, "t_end": 1793485628.789, "bytes": 1.073742e+10, "gbps": 1.724, "err": "no error"}

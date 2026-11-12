@@ -1,0 +1,2 @@
+[phi3rt] rt/mistral_kq_IQ4_XS_g1_lam0_c1.5: resident 3318.6 MB, streamed 0.0 MB (0 tensors), embed host (mmap), scratch 16.8 MB, ctx 512, batch 128, load 9.0 s, MemAvailable 4827 -> 2334 MB
+[graphs] 8 captured, 56 launches

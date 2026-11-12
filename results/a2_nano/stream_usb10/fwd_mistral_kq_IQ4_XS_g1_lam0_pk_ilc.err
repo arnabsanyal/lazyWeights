@@ -1,0 +1,1 @@
+[phi3rt] /mnt/usb/rt/mistral_kq_IQ4_XS_g1_lam0_pk_ilc: resident 2872.9 MB, streamed 1049.6 MB (58 tensors), embed host (mmap), scratch 16.8 MB, ctx 512, batch 128, load 21.8 s, MemAvailable 3280 -> 368 MB

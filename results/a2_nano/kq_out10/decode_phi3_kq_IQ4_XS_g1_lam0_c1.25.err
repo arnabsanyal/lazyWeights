@@ -1,0 +1,1 @@
+[phi3rt] ~/ecw_data/rt/phi3_kq_IQ4_XS_g1_lam0_c1.25: resident 1837.9 MB, streamed 0.0 MB (0 tensors), embed host (mmap), scratch 16.8 MB, ctx 512, batch 128, load 21.2 s, MemAvailable 3429 -> 1327 MB

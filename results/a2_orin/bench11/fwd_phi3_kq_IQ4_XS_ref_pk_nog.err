@@ -1,0 +1,1 @@
+[phi3rt] rt/phi3_kq_IQ4_XS_ref_pk: resident 2008.4 MB, streamed 0.0 MB (0 tensors), embed host (mmap), scratch 16.8 MB, ctx 512, batch 128, load 3.7 s, MemAvailable 4727 -> 3294 MB

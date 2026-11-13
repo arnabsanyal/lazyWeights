@@ -200,13 +200,13 @@ GPTQ with round-to-nearest at the same grid.
 
 ```bibtex
 @misc{sanyal2026lazyweightsdecodeondemandedgellms,
-      title={{LazyWeights: Decode-on-Demand Edge LLMs}},
-      author={Arnab Sanyal and Gourav Datta and Sandeep P. Chinchali},
-      year={2026},
-      eprint={2611.17108},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2611.17108},
+  title         = {{LazyWeights: Decode-on-Demand Edge LLMs}},
+  author        = {Sanyal, Arnab and Datta, Gourav and Chinchali, Sandeep P.},
+  year          = {2026},
+  eprint        = {2611.17108},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG},
+  url           = {https://arxiv.org/abs/2611.17108}
 }
 ```
 

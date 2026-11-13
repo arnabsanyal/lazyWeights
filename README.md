@@ -10,9 +10,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/python-3.12-blue.svg" alt="Python 3.12">
   <img src="https://img.shields.io/badge/PyTorch-2.11-ee4c2c.svg" alt="PyTorch 2.11">
-  <img src="https://img.shields.io/badge/llama.cpp-5d7793d-555555.svg" alt="llama.cpp 5d7793d">
-  <img src="https://img.shields.io/badge/Jetson-Nano%20%7C%20Orin%20Nano%20Super-76B900.svg" alt="Jetson Nano, Orin Nano Super">
-  <img src="https://img.shields.io/badge/Preprint-under%20review-lightgrey.svg" alt="Preprint under review">
+  <img src="https://img.shields.io/badge/llama.cpp-5d7793d-F59E0B.svg" alt="llama.cpp 5d7793d">
+  <img src="https://img.shields.io/badge/Edge--HW-Jetson%20Nano%20%7C%20Orin%20Nano%20Super%20%7C%20ZCU102%20FPGA-76B900.svg" alt="Edge hardware: Jetson Nano, Jetson Orin Nano Super, AMD ZCU102 FPGA">
+  <a href="https://github.com/arnabsanyal/lazyWeights/releases"><img src="https://img.shields.io/badge/Release-code%20%E2%9C%93%20%7C%20device%20logs%20%E2%9C%93%20%7C%20weights%20pending-orange.svg" alt="Release: code and device logs uploaded, weights pending"></a>
+  <a href="https://arxiv.org/abs/2611.17108"><img src="https://img.shields.io/badge/arXiv-2611.17108-b31b1b.svg" alt="arXiv 2611.17108"></a>
 </p>
 
 <p align="center">
@@ -48,6 +49,9 @@ in rate and area at equal throughput; the ASIC decoder unit runs bit-exact on a 
   `--gamma` shares one step per super-block instead of one per sub-block, and `--coarse` widens it. The codes then
   concentrate where the weights do, and GPTQ's error feedback keeps the quality. `--lam` adds an entropy term to
   GPTQ's code choice.
+
+<p align="center"><img src="assets/code_selection.png" width="60%" alt="Code selection: llama.cpp gives each sub-block its own step and rounds each weight alone, so codes spread; LazyWeights shares one widened step per super-block and lets GPTQ feed each column's error forward, so the codes concentrate"></p>
+
 - **Coding.** `scripts/kq_code.py` and `lazyweights/bundle.py` code every matrix with one length-limited Huffman
   table (11-bit codes). A 64 × 256 tile is 32 lanes of two rows each. The lanes' 32-bit words are interleaved, so one
   aligned read fetches the next word of every lane, and per-tile lane offsets let any tile start on its own. 4-bit
@@ -62,40 +66,146 @@ in rate and area at equal throughput; the ASIC decoder unit runs bit-exact on a 
 
 ## Results
 
-Operating points on the Jetson Orin Nano Super (the paper's Table 1). b/w counts all overheads. ΔPPL is WikiText-2
-against fp16. GSM8K is 8-shot chain of thought with flexible extraction. Saving is 1 − b<sub>ours</sub>/b<sub>llama.cpp</sub>.
-Times and energies are per token with greedy decoding, LazyWeights with the decode unit.
+Tables and figures are numbered as in the paper.
 
-| Model | Budget | Format | b/w | ΔPPL | HellaSwag | GSM8K | Saving | Orin ms / mJ |
-|---|---|---|---:|---:|---:|---:|---:|---:|
-| Phi-3-mini | ≤1% | llama.cpp IQ4_XS + imatrix | 4.311 | +0.65% | .783 | .785 | | 35.0 / 691 |
-| | | **LazyWeights** | **4.046** | +0.11% | .778 | .773 | **6.2%** | **31.4 / 627** |
-| | ≤3.5% | llama.cpp Q3_K_M + imatrix | 4.108 | +2.91% | .776 | .779 | | 44.0 / 840 |
-| | | **LazyWeights** | **3.649** | +2.97% | .774 | .770 | **11.2%** | **31.4 / 616** |
-| Mistral-7B | ≤1% | llama.cpp Q5_K_M | 5.668 | +0.44% | .842 | .425 | | 83.3 / 1784 |
-| | | **LazyWeights** | **3.886** | +0.94% | .840 | .402 | **31.4%** | **53.0 / 1107** |
-| | ≤3.5% | llama.cpp IQ3_M + imatrix | 3.628 | +1.01% | .838 | .400 | | 77.7 / 1611 |
-| | | **LazyWeights** | **3.422** | +1.46% | .838 | .368 | **5.7%** | **52.9 / 1068** |
-| SmolLM-1.7B | ≤1% | llama.cpp Q5_K_M | 5.721 | +0.65% | .607 | .064 | | 26.4 / 481 |
-| | | **LazyWeights** | **5.162** | +0.88% | .607 | .067 | **9.8%** | **18.6 / 356** |
-| | ≤3.5% | llama.cpp IQ4_XS + imatrix | 4.388 | +3.09% | .605 | .055 | | 23.7 / 375 |
-| | | **LazyWeights** | **3.934** | +3.27% | .601 | .055 | **10.3%** | **15.3 / 287** |
+### Platforms (Table I)
+
+The two Jetsons are bound by different things, so compression buys different things on each. The ZCU102 runs the
+decode unit itself, to check it bit for bit and cycle for cycle against the C model. DRAM use is weight bytes per token
+divided by time per token, as a fraction of bandwidth, for our fixed-width kernels.
+
+| | Jetson Orin Nano Super | Jetson Nano | AMD ZCU102 (FPGA) |
+|---|---|---|---|
+| Role | edge GPU, runs the models | edge GPU, runs the models | decode-unit prototype |
+| Memory / bandwidth | 8 GB, 102 GB/s | 4 GB, 22.5 GB/s (meas.) | 4 GB PS DDR4; payload in on-chip BRAM (464 BRAM36) |
+| Compute | Ampere GPU, 1024 cores | Maxwell GPU, 128 cores | Zynq UltraScale+ ZU9EG: 4 engines × 32 lanes at 112.5 MHz, 4× Cortex-A53 host |
+| int8 `dp4a` / toolchain | yes / CUDA 12.6 | no / CUDA 10.2 | – / Vivado 2025.2 |
+| Utilization | DRAM use, packed: 40–64% | DRAM use, packed: 34–35% | 183.0k LUTs (67%), 37.2k FFs, 464 BRAM36 (51%), 0 DSPs |
+| Mistral-7B | fits | does not fit (streamed) | – (29 matrices, 484M weights decoded) |
+| **Bound by** | **memory bandwidth** | **instructions + capacity** | **the engine's decode → arbiter loop (~115 MHz)** |
+| **Compression buys** | latency, energy | ability to run; the unit buys latency, energy | – ; shows the decode is bit- and cycle-exact: 14.3 G weights/s, 0.26 nJ per weight |
+
+### Operating points on the Orin Nano Super (Table III)
+
+The upper row of each pair is the llama.cpp budget baseline in its own format. b/w counts all overheads. ΔPPL is
+WikiText-2 against fp16. GSM8K is 8-shot chain of thought with flexible extraction. Saving is
+1 − b<sub>ours</sub>/b<sub>llama.cpp</sub>.
+
+Times and energies are ms / mJ per token, and each runtime uses its own drafter. LazyWeights is run with the decode
+unit, at the measured twin time. Δt is shown as bandwidth-bound / conservative. ΔE assumes a clock-gated decoder.
+
+| Model | Budget | Format | b/w | ΔPPL | HellaSwag | ARC-e | PIQA | GSM8K | Saving | Greedy ms / mJ | Δt | ΔE | Speculation ms / mJ | Δt | ΔE |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Phi-3-mini | ≤1% | IQ4_XS + imatrix | 4.311 | +0.65% | .783 | .807 | .798 | .785 | | 35.0 / 691 | | | 27.4 / 495 | | |
+| | | **LazyWeights** | **4.046** | +0.11% | .778 | .803 | .789 | .773 | **6.2%** | **31.4 / 627** | −15/−10% | −9% | **17.9 / 366** | −39/−35% | −26% |
+| | ≤3.5% | Q3_K_M + imatrix | 4.108 | +2.91% | .776 | .786 | .799 | .779 | | 44.0 / 840 | | | 27.6 / 512 | | |
+| | | **LazyWeights** | **3.649** | +2.97% | .774 | .811 | .796 | .770 | **11.2%** | **31.4 / 616** | −37/−29% | −27% | **18.3 / 370** | −42/−34% | −28% |
+| Mistral-7B | ≤1% | Q5_K_M | 5.668 | +0.44% | .842 | .716 | .768 | .425 | | 83.3 / 1784 | | | 61.6 / 1276 | | |
+| | | **LazyWeights** | **3.886** | +0.94% | .840 | .720 | .770 | .402 | **31.4%** | **53.0 / 1107** | −41/−36% | −38% | **41.5 / 871** | −37/−33% | −32% |
+| | ≤3.5% | IQ3_M + imatrix | 3.628 | +1.01% | .838 | .722 | .779 | .400 | | 77.7 / 1611 | | | 71.6 / 1397 | | |
+| | | **LazyWeights** | **3.422** | +1.46% | .838 | .719 | .782 | .368 | **5.7%** | **52.9 / 1068** | −44/−32% | −34% | **38.5 / 786** | −56/−46% | −44% |
+| SmolLM-1.7B | ≤1% | Q5_K_M | 5.721 | +0.65% | .607 | .633 | .737 | .064 | | 26.4 / 481 | | | 14.3 / 246 | | |
+| | | **LazyWeights** | **5.162** | +0.88% | .607 | .630 | .739 | .067 | **9.8%** | **18.6 / 356** | −33/−29% | −26% | **10.1 / 194** | −33/−29% | −21% |
+| | ≤3.5% | IQ4_XS + imatrix | 4.388 | +3.09% | .605 | .625 | .732 | .055 | | 23.7 / 375 | | | 16.5 / 254 | | |
+| | | **LazyWeights** | **3.934** | +3.27% | .601 | .610 | .736 | .055 | **10.3%** | **15.3 / 287** | −40/−36% | −23% | **7.6 / 143** | −57/−54% | −44% |
 
 <p align="center"><img src="assets/frontier.png" width="95%" alt="Rate-quality frontiers of LazyWeights and llama.cpp on the three models"></p>
 
-Decoder blocks, logic synthesis (pre-layout), ASAP7 at 1 GHz: a comparator lane is 1,566 µm² (3.59 mW, +117 ps
-slack); the 32-lane arbiter is 1,443 µm²; an engine (32 lanes + arbiter) is 0.0515 mm², and the Orin's 4-engine unit
-is 0.206 mm². The same RTL runs bit-exact on a ZCU102 (4 engines at 100 MHz).
+**Fig. 4.** Rate–quality frontiers. Dots are coded models, including llama.cpp's imatrix codes behind our Huffman
+stage. Lines show the lowest ΔPPL reachable at or below a rate, and shading marks where coding wins. Rings are the
+released operating points; dashed lines are the 1% and 3.5% budgets and fp16.
+
+<p align="center"><img src="assets/strip.png" width="95%" alt="(a) Per-step speedup and energy factors from the llama.cpp baseline to LazyWeights; (b) software decode rates and decode-unit area versus rate for Huffman and rANS"></p>
+
+**Fig. 5.** (a) Factors from the llama.cpp baseline (greedy) to LazyWeights with the unit and our drafter. Each step
+makes one change and is drawn on a log scale; the top half is the Orin and the bottom half the Nano. (b) Decode rate.
+The left panel shows software decoders; the right panel shows ASAP7 area against rate for 1–16 engines, with Huffman
+compared to rANS. Bands show the rate each device's DRAM delivers.
+
+### The Jetson Nano (Table IV)
+
+Values are per token: ms / J, except Mistral, which is s / J. CPU is llama.cpp with the budget baseline or our GGUF.
+GPU is our runtime, decoding in software or with the unit (twin time). Mistral streams from USB 3 at a 2560 MB
+resident budget, and its twin is no proxy for the unit.
+
+| Mode | Model | Budget | CPU, baseline | CPU, LazyWeights GGUF | GPU, software | GPU, + unit |
+|---|---|---|---:|---:|---:|---:|
+| Greedy | Phi-3 | ≤1% | 657 / 4.48 | 654 / 4.40 | 591 / 4.24 | **261 / 2.05** |
+| | | ≤3.5% | 736 / 4.80 | 663 / 4.45 | 590 / 4.46 | **263 / 2.08** |
+| | SmolLM | ≤1% | 366 / 2.47 | 364 / 2.21 | 484 / 3.22 | **152 / 1.17** |
+| | | ≤3.5% | 317 / 2.12 | 317 / 2.03 | 289 / 2.10 | **134 / 0.97** |
+| | Mistral | ≤1% | 22.6 / 71.2 | 18.0 / 58.3 | **3.40 / 15.8** | n/a |
+| | | ≤3.5% | **1.93** / 12.7 | 15.1 / 49.0 | 2.08 / **12.0** | n/a |
+| Prompt-lookup speculation | Phi-3 | ≤1% | 840 / 5.60 | 865 / 5.74 | 423 / 2.94 | **244 / 1.71** |
+| | | ≤3.5% | 956 / 6.23 | 864 / 5.74 | 415 / 3.05 | **239 / 1.69** |
+| | SmolLM | ≤1% | 475 / 3.10 | 437 / 2.66 | 286 / 1.84 | **141 / 0.91** |
+| | | ≤3.5% | 419 / 2.73 | 469 / 2.94 | 170 / 1.17 | **101 / 0.65** |
+| | Mistral | ≤1% | 16.7 / 56.6 | 13.3 / 46.1 | **2.30 / 11.3** | n/a |
+| | | ≤3.5% | 2.90 / 19.1 | 11.5 / 40.2 | **1.49 / 8.85** | n/a |
+
+### Runtime optimizations (Table II)
+
+Each row shows a measurement before → after the change.
+
+| Change | Measured on | Effect |
+|---|---|---|
+| Speculative attention, GGUF-width twins | SmolLM 8-token pass, depth 400 | 44.4 → 31.2 ms |
+| | Phi-3 8-token pass, depth 900 | 77.5 → 52.5 ms |
+| Nano kernels | SmolLM ≤1% twin, greedy token | 474 → 152 ms |
+| | SmolLM ≤3.5% | 282 → 134 ms |
+| | Phi-3 | 585 → 261 ms |
+| Ordered reduction | Nano, 2-token coded pass | 418 → 301 ms |
+| CUDA graphs | Orin pass (485–645 kernels) | −1.9 to −3.5 ms (7–12%) |
+| | per greedy token | −6 to −11% |
+
+### Decoder hardware (Table V) and the FPGA prototype
+
+These are logic-synthesis results (pre-layout), with ASAP7 RVT TT at 1 GHz and Nangate45 at 500 MHz.
+
+| Block | ASAP7 µm² | ASAP7 mW | ASAP7 slack | Nangate45 µm² | Nangate45 mW | Nangate45 slack |
+|---|---:|---:|---:|---:|---:|---:|
+| Comparator lane | **1,566** | **3.59** | +117 ps | 23,462 | 25.2 | +0.5 ns |
+| Table lane (2048 entries) | 14,076 | 94.4 | −31 ns | – | – | – |
+| Arbiter, 32 lanes | **1,443** | **0.83** | met† | 18,639 | 4.25 | +1.5 ns |
+| Arbiter, 64 lanes | 9,174 | – | −0.29 ns | – | – | – |
+| Engine | **51,550** | **115.7** | – | – | – | – |
+
+† after OpenROAD repair. Power for the comparator lane uses co-simulation activity; the other blocks use default
+activity. Bold: Engine = 32 comparator lanes + the 32-lane arbiter. The Orin's 4-engine unit is 0.206 mm², and the
+Nano needs one engine.
+
+Huffman beats rANS on both rate and area. rANS is never smaller (0.0 to +1.0% more bits), and at equal throughput
+(2 G weights/s) it needs 4.0× the area with pair symbols, or 1.15× with single codes.
+
+On the ZCU102, four engines close timing at 112.5 MHz (WNS +0.06 ns). All 29 matrices (2,723 chunks, 484M weights)
+decode bit-exact, with cycle, stall and word counts equal to the C model on every chunk. That is 31.8 weights per cycle
+per engine, 14.3 G weights/s in all. The fabric draws 0.88 W idle plus 3.7 W at full rate, which is 0.26 nJ per weight
+(`results/a4_zcu.md`).
+
+### Ablations (Table VI)
+
+Each cell is b/w, ΔPPL (%) at the operating-point settings. γ = 0 uses llama.cpp's own per-sub-block fit. RTN replaces
+GPTQ with round-to-nearest at the same grid.
+
+| Model | Budget | Full | γ = 0 | RTN |
+|---|---|---|---|---|
+| Phi-3 | ≤3.5% | 3.649, +2.97 | 4.046, +0.11 | 3.646, +12.07 |
+| Mistral | ≤1% | 3.886, +0.94 | 4.241, +0.32 | 3.886, −0.04 |
+| | ≤3.5% | 3.422, +1.46 | 3.837, +2.61 | 3.422, +2.78 |
+| SmolLM | ≤1% | 5.162, +0.88 | 5.621, +0.31 | 5.162, +0.57 |
+| | ≤3.5% | 3.934, +3.27 | 4.321, +2.24 | 3.934, +6.14 |
 
 ## Cite this work
 
 ```bibtex
-@misc{sanyal2026lazyweights,
-  title  = {LazyWeights: Decode-on-Demand Edge LLMs},
-  author = {Sanyal, Arnab and Datta, Gourav and Chinchali, Sandeep P.},
-  year   = {2026},
-  note   = {Preprint, under review},
-  url    = {https://arnabsanyal.com/preprint/lazyweights.html}
+@misc{sanyal2026lazyweightsdecodeondemandedgellms,
+      title={{LazyWeights: Decode-on-Demand Edge LLMs}},
+      author={Arnab Sanyal and Gourav Datta and Sandeep P. Chinchali},
+      year={2026},
+      eprint={2611.17108},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2611.17108},
 }
 ```
 
@@ -184,8 +294,16 @@ nvcc -O3 -std=c++14 -arch=sm_53 -DPHI3RT_MAIN kernels/llmrt.cu -o llmrt -lpthrea
 ```
 
 `a2_spec_energy.py`, `a5_system.py`, `a5_energy.py` and `a5_variance.py` turn the device runs into per-token time
-and energy, with the decode unit modelled at the measured fixed-width-twin time. `scripts/figs/fig_gain.py` reads
-the raw device logs (to be released, see TODO). `scripts/figs/fig_strip.py` draws Fig. 5 from the derived
+and energy, with the decode unit modelled at the measured fixed-width-twin time. The raw device runs (runtime output and
+`tegrastats` power, 15.5 MB) are a release asset; unpack them over the repository to rerun these scripts and
+`scripts/figs/fig_gain.py`:
+
+```bash
+curl -L https://github.com/arnabsanyal/lazyWeights/releases/download/v1.0/lazyweights-device-logs.tar.gz | tar xz
+python scripts/a5_energy.py; python scripts/a5_variance.py results/a2_orin/var; python scripts/figs/fig_gain.py
+```
+
+`scripts/figs/fig_strip.py` draws Fig. 5 (shown under Results) from the derived
 `results/a5_gain.jsonl`.
 
 **5. Decoder hardware.** Each step checks against the one before it: C model, RTL co-simulation, synthesis, FPGA.
@@ -200,7 +318,7 @@ PLATFORM=nangate45 CLK_PS=2000 hw/huff/syn/synth.sh huff_lane ng45_lane_cmp "BUF
 hw/huff/syn/power.sh lane_cmp <stim.hex from a4_cosim> <tag>   # gate-level power with co-simulation activity
 python scripts/a4_report.py    # collects build/syn/ into results/a4_asic.jsonl and results/a4_report.md
 python scripts/a4_pairs.py     # pair symbols on/off;  a4_rans_rate.py: rANS vs Huffman rate;  a4_sys.py: system check
-vivado -mode batch -source hw/huff/fpga/build_zcu.tcl -tclargs 4 4 12 f100   # ZCU102; host side: zcu_jobs.py, zcu_host.py
+vivado -mode batch -source hw/huff/fpga/build_zcu.tcl -tclargs 4 3.75 10 f112r   # ZCU102, 112.5 MHz; host side: zcu_jobs.py, zcu_host.py
 ```
 
 ### Repository layout
@@ -213,7 +331,7 @@ vivado -mode batch -source hw/huff/fpga/build_zcu.tcl -tclargs 4 4 12 f100   # Z
 | `hw/huff/` | decode unit: RTL (`rtl/`), C++ model and testbenches (`huff_engine.h`, `tb/`), synthesis and power (`syn/`), OpenROAD flow (`orfs/`), Nexys / ZCU102 FPGA builds (`fpga/`) |
 | `hw/rans/` | the rANS engine used for comparison |
 | `results/` | the rows behind every table and figure (JSONL, with Markdown summaries) |
-| `assets/` | logo (generated by `assets/src/gen_logo.py`) and README figures |
+| `assets/` | logo (generated by `assets/src/gen_logo.py`) and README figures (Figs. 1–5 of the paper, as PNG) |
 
 ## Model artifacts
 
@@ -227,8 +345,8 @@ coded runtime bundles. Links will be added here when they are released.
 ## TODO
 
 - [ ] Release the six operating-point GGUFs and their coded bundles
-- [ ] Release the raw Jetson logs (tegrastats and runtime output) behind `fig_gain.py` and the energy tables
-- [ ] Add the arXiv link and citation
+- [x] Release the raw Jetson logs (tegrastats and runtime output) behind `fig_gain.py` and the energy tables
+- [x] Add the arXiv link and citation
 
 ## References
 

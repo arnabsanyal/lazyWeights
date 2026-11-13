@@ -12,7 +12,8 @@
   <img src="https://img.shields.io/badge/PyTorch-2.11-ee4c2c.svg" alt="PyTorch 2.11">
   <img src="https://img.shields.io/badge/llama.cpp-5d7793d-F59E0B.svg" alt="llama.cpp 5d7793d">
   <img src="https://img.shields.io/badge/Edge--HW-Jetson%20Nano%20%7C%20Orin%20Nano%20Super%20%7C%20ZCU102%20FPGA-76B900.svg" alt="Edge hardware: Jetson Nano, Jetson Orin Nano Super, AMD ZCU102 FPGA">
-  <a href="https://github.com/arnabsanyal/lazyWeights/releases"><img src="https://img.shields.io/badge/Release-code%20%E2%9C%93%20%7C%20device%20logs%20%E2%9C%93%20%7C%20weights%20pending-orange.svg" alt="Release: code and device logs uploaded, weights pending"></a>
+  <a href="https://github.com/arnabsanyal/lazyWeights/releases"><img src="https://img.shields.io/badge/Release-code%20%E2%9C%93%20%7C%20device%20logs%20%E2%9C%93%20%7C%20weights%20%E2%9C%93-brightgreen.svg" alt="Release: code, device logs and weights uploaded"></a>
+  <a href="https://huggingface.co/arnabsanyal/lazyWeights"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Models-arnabsanyal%2FlazyWeights-FFD21E.svg" alt="Models on Hugging Face"></a>
   <a href="https://arxiv.org/abs/2611.17108"><img src="https://img.shields.io/badge/arXiv-2611.17108-b31b1b.svg" alt="arXiv 2611.17108"></a>
 </p>
 
@@ -339,12 +340,23 @@ LazyWeights quantizes public checkpoints:
 [Phi-3-mini-4k-instruct](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-onnx),
 [Mistral-7B-Instruct-v0.2](https://huggingface.co/microsoft/mistral-7b-instruct-v0.2-ONNX) and
 [SmolLM-1.7B-Instruct](https://huggingface.co/HuggingFaceTB/SmolLM-1.7B-Instruct), each from its fp16 ONNX release.
-Two kinds of file are worth downloading: the six operating-point GGUFs, which run in unmodified llama.cpp, and their
-coded runtime bundles. Links will be added here when they are released.
+The six operating points are on Hugging Face at
+[arnabsanyal/lazyWeights](https://huggingface.co/arnabsanyal/lazyWeights). Each comes as a GGUF, which runs in
+unmodified llama.cpp, and as its coded runtime bundle, which runs in `kernels/llmrt.cu`. The tensors in the GGUFs are
+byte-identical to the files the paper measured, and `SHA256SUMS` lists the GGUFs and the bundle payloads. The layout
+mirrors `$LW_MODELS`, so one command puts the files where the scripts look for them:
+
+```bash
+hf download arnabsanyal/lazyWeights --local-dir ${LW_MODELS:-models}                                   # all six (~28 GB)
+hf download arnabsanyal/lazyWeights --local-dir ${LW_MODELS:-models} --include "smollm-1-7b-instruct/*"  # one model
+```
+
+The fixed-width twins (`--packed`) and the Nano streaming layouts are not uploaded. Rebuild them from the GGUF with
+`scripts/a2_kq_bundle.py`.
 
 ## TODO
 
-- [ ] Release the six operating-point GGUFs and their coded bundles
+- [x] Release the six operating-point GGUFs and their coded bundles ([Hugging Face](https://huggingface.co/arnabsanyal/lazyWeights))
 - [x] Release the raw Jetson logs (tegrastats and runtime output) behind `fig_gain.py` and the energy tables
 - [x] Add the arXiv link and citation
 
